@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/forecast"
+        android:icon="@drawable/ic_forecast"
+        android:title="">
+    </item>
+
+    <item
+        android:id="@+id/map"
+        android:icon="@drawable/ic_map"
+        android:title="">
+    </item>
+
+    <item
+        android:id="@+id/locations"
+        android:icon="@drawable/ic_locations"
+        android:title="">
+    </item>
+
+    <item
+        android:id="@+id/news"
+        android:icon="@drawable/ic_news"
+        android:title="">
+
+    </item>
+
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
+        android:title="">
+    </item>
+
+</menu>
