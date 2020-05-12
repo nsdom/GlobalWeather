@@ -53,4 +53,5 @@ public class ViewModel {
         MenuItem menuItem = menu.getItem(MENU_ITEM);
         menuItem.setChecked(true);
     }
+
 }

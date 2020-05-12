@@ -41,6 +41,11 @@ public class ForecastActivity extends AppCompatActivity {
     }
 
     @Override
+    public void finish() {
+        super.finish();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
     }

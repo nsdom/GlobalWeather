@@ -2,7 +2,6 @@ package com.nsdom.globalweather.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
