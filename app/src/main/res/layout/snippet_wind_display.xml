@@ -2,7 +2,6 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-        android:paddingBottom="8dp"
         android:paddingTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,6 +41,7 @@
             android:layout_marginStart="8dp"/>
 
         <ImageView
+            android:id="@+id/wind_direction_img_view"
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_marginStart="8dp"

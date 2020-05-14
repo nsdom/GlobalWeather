@@ -23,17 +23,26 @@ import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.nsdom.globalweather.R;
+import com.nsdom.globalweather.forecast.ForecastActivity;
+import com.nsdom.globalweather.forecast.hourly.pojo.Hourly;
 import com.nsdom.globalweather.forecast.hourly.pojo.HourlyWeather;
+import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class HourlyForecastFragment extends Fragment {
 
     private static final String TAG = "HourlyForecastFragment";
-    private List<HourlyWeather> hourlyWeatherList = new ArrayList<>();
     private Context context = getActivity();
     private RecyclerView recyclerView;
+    private ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>();
 
 
 
@@ -44,64 +53,59 @@ public class HourlyForecastFragment extends Fragment {
         Log.d(TAG, "onCreateView: ");
 
         recyclerView = view.findViewById(R.id.recyclerView);
-/*        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));*/
-        HourlyRecyclerAdapter adapter = new HourlyRecyclerAdapter(hourlyWeatherList, context);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-
         GraphView graphView = view.findViewById(R.id.graphView);
-        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, -10),
-                new DataPoint(2, 6),
-                new DataPoint(4, 9),
-                new DataPoint(6, 12),
-                new DataPoint(8, 15),
-                new DataPoint(10,18),
-                new DataPoint(12, 21),
-                new DataPoint(14, 24),
-                new DataPoint(16, 27),
-                new DataPoint(18, 30),
-                new DataPoint(20, 33),
-                new DataPoint(22, 36)
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-
-
-        });
-        series.setSpacing(10);
-        final boolean[] negativeData = {false};
-        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+        OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
+        Call<Hourly> call = openWeatherApi.getHourlyData(39.9163, -8.9520, "metric");
+        call.enqueue(new Callback<Hourly>() {
             @Override
-            public int get(DataPoint data) {
+            public void onResponse(Call<Hourly> call, Response<Hourly> response) {
 
-                if (data.getY() >= 50) {
-                    return Color.rgb(255, 0, 0);
-                } else if (data.getY() < 50 && data.getY() >= 20) {
-                    return Color.rgb(255, 255 - (255 * (int) data.getY()) / 50, 0);
-                } else if (data.getY() < 0) {
-                    return Color.rgb((255 * (int) Math.abs(data.getY())) / 20, 0, 255);
-                } else {
-                    return Color.rgb(0, (255 * (int) data.getY()) / 20, 255);
+                Log.d(TAG, "onResponse: Server Response" + response.toString());
+                assert response.body() != null;
+                Log.d(TAG, "onResponse: Response: " + response.body().toString());
+                hourlyWeathers = response.body().getHourly();
+                String timezone = response.body().getTimezone();
+                HourlyRecyclerAdapter adapter = new HourlyRecyclerAdapter(hourlyWeathers, timezone);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                DataPoint[] dataPoints = new DataPoint[24];
+                Double max = Double.MIN_VALUE;
+                Double min = Double.MAX_VALUE;
+                for (int i = 0; i < 24; i++) {
+                    DataPoint v = new DataPoint(i, hourlyWeathers.get(i).getTemperature());
+                    dataPoints[i] = v;
+                    if (hourlyWeathers.get(i).getTemperature() > max) max = hourlyWeathers.get(i).getTemperature();
+                    if (hourlyWeathers.get(i).getTemperature() < min) min = hourlyWeathers.get(i).getTemperature();
                 }
+                LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
+                series.setColor(Color.BLACK);
+                graphView.getViewport().setXAxisBoundsManual(true);
+                graphView.getViewport().setMaxX(24);
+                graphView.getViewport().setYAxisBoundsManual(true);
+                graphView.getViewport().setMaxY(max + 5);
+                graphView.getViewport().setMinY(min > 0 ? 0 : min);
+                graphView.getGridLabelRenderer().setNumHorizontalLabels(5);
+                graphView.getGridLabelRenderer().setNumVerticalLabels(10);
+                graphView.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
+                graphView.getGridLabelRenderer().setLabelsSpace(10);
+                graphView.getGridLabelRenderer().setHorizontalAxisTitle("         Hours");
+                graphView.getGridLabelRenderer().setVerticalAxisTitle("Temperature");
+                graphView.addSeries(series);
+            }
+
+            @Override
+            public void onFailure(Call<Hourly> call, Throwable t) {
+                Log.e(TAG, "onFailure: Something went wrong" + t.getMessage());
             }
         });
 
-        graphView.getViewport().setXAxisBoundsManual(true);
-        graphView.getViewport().setMaxX(25);
-        graphView.getViewport().setYAxisBoundsManual(true);
-        graphView.getViewport().setMaxY(45);
-        graphView.getViewport().setMinX(-1);
-        graphView.getViewport().setMinY(series.getLowestValueY());
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
-        graphView.getGridLabelRenderer().setNumVerticalLabels(10);
-        graphView.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
-        graphView.addSeries(series);
-        graphView.setTitle("Temperature");;
+
+
 
 
         return view;

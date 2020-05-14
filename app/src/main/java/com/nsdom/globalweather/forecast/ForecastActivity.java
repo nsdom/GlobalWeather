@@ -34,6 +34,7 @@ public class ForecastActivity extends AppCompatActivity {
     private static final int MENU_ITEM = 0;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private ArrayList<HourlyWeather> hourlyWeather;
 
 
     @Override
@@ -45,42 +46,7 @@ public class ForecastActivity extends AppCompatActivity {
         setupViewModel();
         setBottomNavigation();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openweathermap.org")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
-        Call<Hourly> call = openWeatherApi.getHourlyData(33.44, -94.04, "metric");
-        call.enqueue(new Callback<Hourly>() {
-            @Override
-            public void onResponse(Call<Hourly> call, Response<Hourly> response) {
-
-                Log.d(TAG, "onResponse: Server Response" + response.toString());
-                assert response.body() != null;
-                Log.d(TAG, "onResponse: Response: " + response.body().toString());
-                ArrayList<HourlyWeather> hourlyWeather = response.body().getHourly();
-                for (int i = 0; i < hourlyWeather.size(); i++) {
-                    Log.d(TAG, "onResponse: \n" +
-                            "hour: " + hourlyWeather.get(i).getHour() + "\n" +
-                            "temperature: " + hourlyWeather.get(i).getTemperature() + "\n" +
-                            "feels like: " + hourlyWeather.get(i).getFeelsLike() + "\n" +
-                            "humidity: " + hourlyWeather.get(i).getHumidity() + "%\n" +
-                            "clouds: " + hourlyWeather.get(i).getClouds() + "%\n" +
-                            "wind speed: " + hourlyWeather.get(i).getWindSpeed() + "m/s\n" +
-                            "wind degree: " + hourlyWeather.get(i).getWindDegree() + "degrees\n" +
-                            "weather: \n-main: " + hourlyWeather.get(i).getWeather().get(0).getMain() + "\n" +
-                            "-description: " + hourlyWeather.get(i).getWeather().get(0).getDescription() + "\n" +
-                            "-icon: " + hourlyWeather.get(i).getWeather().get(0).getIcon() + "\n" +
-                            "--------------------------------------------------------------------");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Hourly> call, Throwable t) {
-                Log.e(TAG, "onFailure: Something went wrong" + t.getMessage());
-            }
-        });
 
    }
 

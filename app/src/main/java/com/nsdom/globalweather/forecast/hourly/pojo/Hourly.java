@@ -7,9 +7,17 @@ import java.util.ArrayList;
 
 public class Hourly {
 
+    @SerializedName("timezone")
+    @Expose
+    private String timezone;
+
     @SerializedName("hourly")
     @Expose
     private ArrayList<HourlyWeather> hourly;
+
+    public String getTimezone() {
+        return timezone;
+    }
 
     public ArrayList<HourlyWeather> getHourly() {
         return hourly;
@@ -18,7 +26,8 @@ public class Hourly {
     @Override
     public String toString() {
         return "Hourly{" +
-                "hourly=" + hourly +
+                "timezone='" + timezone + '\'' +
+                ", hourly=" + hourly +
                 '}';
     }
 }

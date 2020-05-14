@@ -2,14 +2,13 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-        android:paddingBottom="16dp"
-        android:paddingTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center">
 
         <TextView
+            android:id="@+id/description_txt_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Overcast Clouds"
@@ -22,10 +21,11 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_forecast" />
+            android:id="@+id/iconDescription_img_view"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="8dp" />
 
     </LinearLayout>
 
