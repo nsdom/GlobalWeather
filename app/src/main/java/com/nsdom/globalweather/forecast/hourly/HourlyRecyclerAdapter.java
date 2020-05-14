@@ -35,9 +35,6 @@ public class HourlyRecyclerAdapter extends RecyclerView.Adapter<HourlyRecyclerAd
     @Override
     public void onBindViewHolder(@NonNull HourlyRecyclerAdapter.HourlyViewHolder holder, int position) {
 
-        holder.hourTxtView.setText(hourlyWeatherList.get(position).getHour());
-        holder.temperatureTxtView.setText(hourlyWeatherList.get(position).getTemperature());
-        holder.windTxtView.setText(hourlyWeatherList.get(position).getWind());
     }
 
     @Override

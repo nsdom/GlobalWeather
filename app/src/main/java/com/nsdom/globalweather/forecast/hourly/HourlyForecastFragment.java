@@ -44,13 +44,13 @@ public class HourlyForecastFragment extends Fragment {
         Log.d(TAG, "onCreateView: ");
 
         recyclerView = view.findViewById(R.id.recyclerView);
+/*        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
         hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
         hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
         hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
         hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
         hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
-        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));
+        hourlyWeatherList.add(new HourlyWeather("12:00h", "25ºC", "20mph"));*/
         HourlyRecyclerAdapter adapter = new HourlyRecyclerAdapter(hourlyWeatherList, context);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));

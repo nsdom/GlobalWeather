@@ -41,4 +41,19 @@ dependencies {
 
     //GraphView
     implementation 'com.jjoe64:graphview:4.2.2'
+    
+    //RxAndroid
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    //RxJava
+    implementation "io.reactivex.rxjava3:rxjava:3.0.3"
+    //RxBindings
+    implementation 'com.jakewharton.rxbinding3:rxbinding-material:3.1.0'
+    //SquareRetrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    //RetrofitAdapter
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    //GsonConverter
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 }
