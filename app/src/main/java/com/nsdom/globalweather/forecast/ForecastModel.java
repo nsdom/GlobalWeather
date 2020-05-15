@@ -32,7 +32,6 @@ import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -96,6 +95,7 @@ public class ForecastModel {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi api = retrofit.create(OpenWeatherApi.class);
         Call<Daily> call = api.getDailyData(39.9163, -8.9520, "metric");
+        //noinspection NullableProblems
         call.enqueue(new Callback<Daily>() {
             @Override
             public void onResponse(Call<Daily> call, Response<Daily> response) {
@@ -156,8 +156,8 @@ public class ForecastModel {
     }
 
     private void setupDailyChart(ArrayList<DailyWeather> dailyWeathers, LineChart lineChart) {
-        List<Entry> maxTempValues = new ArrayList<Entry>();
-        List<Entry> minTempValues = new ArrayList<Entry>();
+        List<Entry> maxTempValues = new ArrayList<>();
+        List<Entry> minTempValues = new ArrayList<>();
         for (float i = 0; i < dailyWeathers.size(); i++) {
             Entry entry = new Entry(i, (float) (dailyWeathers.get((int) i).getTemperatures().getMax() * 1.00f));
             Entry entry1 = new Entry(i, (float) (dailyWeathers.get((int) i).getTemperatures().getMin() * 1.00f));
@@ -166,13 +166,37 @@ public class ForecastModel {
         }
         LineDataSet set1 = new LineDataSet(maxTempValues, "max");
         LineDataSet set2 = new LineDataSet(minTempValues, "min");
-
-        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        styleDailyLineDataSet(set1, set2);
+        List<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         dataSets.add(set2);
         LineData data = new LineData(dataSets);
+        styleDailyLineChart(lineChart, data);
+    }
+
+
+    private void styleDailyLineDataSet(LineDataSet set1, LineDataSet set2) {
+        set1.setDrawFilled(true);
+        set1.setFillColor(Color.RED);
+        set1.setColor(Color.RED);
+        set1.setDrawCircles(false);
+        set1.setDrawValues(false);
+        set2.setDrawFilled(true);
+        set2.setFillColor(Color.BLUE);
+        set2.setColor(Color.BLUE);
+        set2.setDrawCircles(false);
+        set2.setDrawValues(false);
+    }
+
+    private void styleDailyLineChart(LineChart lineChart, LineData data) {
+        lineChart.getDescription().setText("Temperatures for the next 7 days");
+        lineChart.getDescription().setPosition(1000,610);
+        lineChart.getDescription().setTextSize(16);
+        lineChart.getXAxis().setDrawGridLines(false);
+        lineChart.getAxisLeft().setDrawGridLines(false);
+        lineChart.getAxisRight().setDrawGridLines(false);
+        lineChart.animateY(1000);
         lineChart.setData(data);
         lineChart.invalidate();
-
     }
 }
