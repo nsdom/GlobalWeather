@@ -37,12 +37,10 @@
         android:layout_below="@id/relative_layout1"
         android:paddingBottom="50dp">
 
-        <com.jjoe64.graphview.GraphView
+        <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/graphView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="50dp"
-            android:layout_marginStart="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>

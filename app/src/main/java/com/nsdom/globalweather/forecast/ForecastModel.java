@@ -1,8 +1,12 @@
 package com.nsdom.globalweather.forecast;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,25 +18,27 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.tabs.TabLayout;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.current.CurrentForecastFragment;
 import com.nsdom.globalweather.forecast.daily.DailyForecastFragment;
 import com.nsdom.globalweather.forecast.daily.DailyRecyclerAdapter;
 import com.nsdom.globalweather.forecast.hourly.HourlyForecastFragment;
 import com.nsdom.globalweather.forecast.hourly.HourlyRecyclerAdapter;
+import com.nsdom.globalweather.forecast.pojo.Current;
+import com.nsdom.globalweather.forecast.pojo.CurrentWeather;
 import com.nsdom.globalweather.forecast.pojo.Daily;
 import com.nsdom.globalweather.forecast.pojo.DailyWeather;
 import com.nsdom.globalweather.forecast.pojo.Hourly;
 import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
 import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,10 +75,70 @@ public class ForecastModel {
                 .build();
     }
 
-    public void fetchHourlyData(RecyclerView recyclerView, GraphView graphView) {
+    public void fetchCurrentData(View view) {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
-        Call<Hourly> call = openWeatherApi.getHourlyData(39.9163, -8.9520, "metric");
+        Call<Current> call = openWeatherApi.getCurrentData(39.6511, -7.67345, "metric");
+        //noinspection NullableProblems
+        call.enqueue(new Callback<Current>() {
+            @Override
+            public void onResponse(Call<Current> call, Response<Current> response) {
+                Log.d(TAG, "onResponse: Server Response: " + response.toString());
+                assert response.body() != null;
+                Log.d(TAG, "onResponse: Response: " + response.body().toString());
+                CurrentWeather currentWeather = response.body().getCurrent();
+                String timezone = response.body().getTimezone();
+                setupViewWidgets(view, currentWeather, timezone);
+
+            }
+            @Override
+            public void onFailure(Call<Current> call, Throwable t) {
+                Log.e(TAG, "onFailure: Something went wrong", t);
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setupViewWidgets(View view, CurrentWeather currentWeather, String timezone) {
+        TextView temperatureTxtView = view.findViewById(R.id.temperature_textView);
+        TextView timeTxtView = view.findViewById(R.id.date_textView);
+        TextView descriptionTxtView = view.findViewById(R.id.description_txt_view);
+        TextView windTextView = view.findViewById(R.id.wind_textView);
+        ImageView windDirectionImgView = view.findViewById(R.id.wind_direction_img_view);
+        TextView cloudsTxtView = view.findViewById(R.id.clouds_textView);
+        TextView humidityTxtView = view.findViewById(R.id.humidity_textView);
+        TextView feelsLikeTxtView = view.findViewById(R.id.feels_like_textView);
+        ImageView iconDescriptionTxtView = view.findViewById(R.id.iconDescription_img_view);
+
+        String temperature = Long.toString(Math.round(currentWeather.getTemperature()));
+        String description = currentWeather.getWeather().get(0).getDescription();
+        String windSpeed = currentWeather.getWindSpeed().toString();
+        int rotation = currentWeather.getWindDegree();
+        String clouds = Integer.toString(currentWeather.getClouds());
+        String humidity = Integer.toString(currentWeather.getHumidity());
+        String feelsLike = Long.toString(Math.round(currentWeather.getFeelsLike()));
+        String iconString = currentWeather.getWeather().get(0).getIcon();
+        String iconUrl = "https://openweathermap.org/img/wn/" + iconString + "@2x.png";
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm - EEE, MMM d", Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone(timezone));
+        String time = sdf.format(currentWeather.getTime() * 1000L);
+
+        temperatureTxtView.setText(temperature);
+        descriptionTxtView.setText(description);
+        windTextView.setText(windSpeed);
+        windDirectionImgView.setRotation(rotation);
+        cloudsTxtView.setText(clouds);
+        humidityTxtView.setText(humidity);
+        feelsLikeTxtView.setText(feelsLike);
+        Picasso.get().load(iconUrl).into(iconDescriptionTxtView);
+        timeTxtView.setText(time);
+
+    }
+
+    public void fetchHourlyData(RecyclerView recyclerView, LineChart lineChart) {
+        Retrofit retrofit = getRetrofit();
+        OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
+        Call<Hourly> call = openWeatherApi.getHourlyData(39.6511, -7.67345, "metric");
         //noinspection NullableProblems
         call.enqueue(new Callback<Hourly>() {
             @Override
@@ -82,7 +148,7 @@ public class ForecastModel {
                 Log.d(TAG, "onResponse: Response: " + response.body().toString());
                 ArrayList<HourlyWeather> hourlyWeathers = response.body().getHourly();
                 setupHourlyRecyclerView(response, hourlyWeathers, recyclerView);
-                setupGraphView(hourlyWeathers, graphView);
+                setupHourlyChart(hourlyWeathers, lineChart);
             }
             @Override
             public void onFailure(Call<Hourly> call, Throwable t) {
@@ -94,7 +160,7 @@ public class ForecastModel {
     public void fetchDailyData(RecyclerView recyclerView, LineChart lineChart) {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi api = retrofit.create(OpenWeatherApi.class);
-        Call<Daily> call = api.getDailyData(39.9163, -8.9520, "metric");
+        Call<Daily> call = api.getDailyData(39.6511, -7.67345, "metric");
         //noinspection NullableProblems
         call.enqueue(new Callback<Daily>() {
             @Override
@@ -129,38 +195,35 @@ public class ForecastModel {
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
     }
 
-    private void setupGraphView(ArrayList<HourlyWeather> hourlyWeathers, GraphView graphView) {
-        DataPoint[] dataPoints = new DataPoint[24];
-        Double max = Double.MIN_VALUE;
-        Double min = Double.MAX_VALUE;
+    private void setupHourlyChart(ArrayList<HourlyWeather> hourlyWeathers, LineChart lineChart) {
+        List<Entry> temperature = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            DataPoint v = new DataPoint(i, hourlyWeathers.get(i).getTemperature());
-            dataPoints[i] = v;
-            if (hourlyWeathers.get(i).getTemperature() > max) max = hourlyWeathers.get(i).getTemperature();
-            if (hourlyWeathers.get(i).getTemperature() < min) min = hourlyWeathers.get(i).getTemperature();
+            Entry entry = new Entry(i, (float) (hourlyWeathers.get(i).getTemperature() * 1.00f));
+            temperature.add(entry);
         }
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
-        series.setColor(Color.BLACK);
-        graphView.getViewport().setXAxisBoundsManual(true);
-        graphView.getViewport().setMaxX(24);
-        graphView.getViewport().setYAxisBoundsManual(true);
-        graphView.getViewport().setMaxY(max + 5);
-        graphView.getViewport().setMinY(min > 0 ? 0 : min);
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(5);
-        graphView.getGridLabelRenderer().setNumVerticalLabels(10);
-        graphView.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
-        graphView.getGridLabelRenderer().setLabelsSpace(10);
-        graphView.getGridLabelRenderer().setHorizontalAxisTitle("         Hours");
-        graphView.getGridLabelRenderer().setVerticalAxisTitle("Temperature");
-        graphView.addSeries(series);
+        LineDataSet set = new LineDataSet(temperature, "temperature");
+        styleHourlyLineDataSet(set);
+        List<ILineDataSet> dataSet = new ArrayList<>();
+        dataSet.add(set);
+        LineData data = new LineData(dataSet);
+        lineChart.setData(data);
+        styleLineChart(lineChart);
+    }
+
+    private void styleHourlyLineDataSet(LineDataSet set) {
+        set.setDrawFilled(true);
+        set.setFillColor(Color.GRAY);
+        set.setColor(Color.GRAY);
+        set.setDrawCircles(false);
+        set.setDrawValues(false);
     }
 
     private void setupDailyChart(ArrayList<DailyWeather> dailyWeathers, LineChart lineChart) {
         List<Entry> maxTempValues = new ArrayList<>();
         List<Entry> minTempValues = new ArrayList<>();
-        for (float i = 0; i < dailyWeathers.size(); i++) {
-            Entry entry = new Entry(i, (float) (dailyWeathers.get((int) i).getTemperatures().getMax() * 1.00f));
-            Entry entry1 = new Entry(i, (float) (dailyWeathers.get((int) i).getTemperatures().getMin() * 1.00f));
+        for (int i = 0; i < dailyWeathers.size(); i++) {
+            Entry entry = new Entry(i, (float) (dailyWeathers.get(i).getTemperatures().getMax() * 1.00f));
+            Entry entry1 = new Entry(i, (float) (dailyWeathers.get(i).getTemperatures().getMin() * 1.00f));
             maxTempValues.add(entry);
             minTempValues.add(entry1);
         }
@@ -171,9 +234,9 @@ public class ForecastModel {
         dataSets.add(set1);
         dataSets.add(set2);
         LineData data = new LineData(dataSets);
-        styleDailyLineChart(lineChart, data);
+        styleLineChart(lineChart);
+        lineChart.setData(data);
     }
-
 
     private void styleDailyLineDataSet(LineDataSet set1, LineDataSet set2) {
         set1.setDrawFilled(true);
@@ -188,15 +251,12 @@ public class ForecastModel {
         set2.setDrawValues(false);
     }
 
-    private void styleDailyLineChart(LineChart lineChart, LineData data) {
-        lineChart.getDescription().setText("Temperatures for the next 7 days");
-        lineChart.getDescription().setPosition(1000,610);
-        lineChart.getDescription().setTextSize(16);
+    private void styleLineChart(LineChart lineChart) {
+        lineChart.invalidate();
+        lineChart.getDescription().setPosition(0,0);
         lineChart.getXAxis().setDrawGridLines(false);
         lineChart.getAxisLeft().setDrawGridLines(false);
         lineChart.getAxisRight().setDrawGridLines(false);
         lineChart.animateY(1000);
-        lineChart.setData(data);
-        lineChart.invalidate();
     }
 }

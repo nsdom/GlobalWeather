@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.jjoe64.graphview.GraphView;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.ForecastModel;
@@ -36,8 +37,8 @@ public class HourlyForecastFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerView);
         ForecastModel model = new ForecastModel(context);
-        GraphView graphView = view.findViewById(R.id.graphView);
-        model.fetchHourlyData(recyclerView, graphView);
+        LineChart lineChart = view.findViewById(R.id.graphView);
+        model.fetchHourlyData(recyclerView, lineChart);
 
         return view;
     }

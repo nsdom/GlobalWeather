@@ -2,16 +2,84 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background_gradient_inverse">
 
     <TextView
+        android:id="@+id/title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Current Forecast"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:textSize="32sp"
-        android:textAlignment="center"
-        android:layout_marginTop="100dp"/>
+        android:textSize="24sp"
+        android:textAlignment="center"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_text_view"
+        android:paddingTop="25dp"
+        android:paddingBottom="75dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:clipToPadding="false"
+        android:clipChildren="false">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="30dp"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            app:cardElevation="6dp"
+            app:cardPreventCornerOverlap="false"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/date_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_top_hourly_card"
+                    android:gravity="center"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="Day 1"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <include layout="@layout/snippet_current_description_display"/>
+                <include layout="@layout/snippet_wind_display"/>
+                <include layout="@layout/snippet_clouds_humidity_display"/>
+
+                <TextView
+                    android:id="@+id/description_txt_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Overcast clouds"
+                    android:textSize="24sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:layout_marginTop="30dp"/>
+
+                <include layout="@layout/snippet_current_temperature_display"/>
+
+
+            </LinearLayout>
+
+
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+
 
 </RelativeLayout>
