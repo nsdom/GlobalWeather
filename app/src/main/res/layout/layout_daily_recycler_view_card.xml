@@ -41,14 +41,6 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Temperature"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"/>
 
             <include layout="@layout/snippet_temperature_maxmin_display"/>
             <include layout="@layout/snippet_wind_display"/>

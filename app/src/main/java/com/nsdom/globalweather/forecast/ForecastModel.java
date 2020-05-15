@@ -9,6 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.tabs.TabLayout;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -27,6 +31,8 @@ import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
 import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -98,6 +104,7 @@ public class ForecastModel {
                 Log.d(TAG, "onResponse: Response" + response.body().toString());
                 ArrayList<DailyWeather> dailyWeathers = response.body().getDaily();
                 setupDailyRecyclerView(response, dailyWeathers, recyclerView);
+                setupDailyChart(dailyWeathers, lineChart);
             }
             @Override
             public void onFailure(Call<Daily> call, Throwable t) {
@@ -146,5 +153,26 @@ public class ForecastModel {
         graphView.getGridLabelRenderer().setHorizontalAxisTitle("         Hours");
         graphView.getGridLabelRenderer().setVerticalAxisTitle("Temperature");
         graphView.addSeries(series);
+    }
+
+    private void setupDailyChart(ArrayList<DailyWeather> dailyWeathers, LineChart lineChart) {
+        List<Entry> maxTempValues = new ArrayList<Entry>();
+        List<Entry> minTempValues = new ArrayList<Entry>();
+        for (float i = 0; i < dailyWeathers.size(); i++) {
+            Entry entry = new Entry(i, (float) (dailyWeathers.get((int) i).getTemperatures().getMax() * 1.00f));
+            Entry entry1 = new Entry(i, (float) (dailyWeathers.get((int) i).getTemperatures().getMin() * 1.00f));
+            maxTempValues.add(entry);
+            minTempValues.add(entry1);
+        }
+        LineDataSet set1 = new LineDataSet(maxTempValues, "max");
+        LineDataSet set2 = new LineDataSet(minTempValues, "min");
+
+        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        dataSets.add(set1);
+        dataSets.add(set2);
+        LineData data = new LineData(dataSets);
+        lineChart.setData(data);
+        lineChart.invalidate();
+
     }
 }

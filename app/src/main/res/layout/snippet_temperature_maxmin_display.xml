@@ -19,7 +19,8 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp"/>
+            android:paddingEnd="8dp"
+            android:layout_marginStart="20dp"/>
 
         <TextView
             android:id="@+id/temp_max_txt_view"
@@ -34,7 +35,7 @@
             android:text="ºC"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:layout_marginEnd="50dp"/>
+            android:layout_marginEnd="75dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +57,8 @@
             android:layout_height="wrap_content"
             android:text="ºC"
             android:textColor="@color/black"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:layout_marginEnd="20dp"/>
 
     </LinearLayout>
 
