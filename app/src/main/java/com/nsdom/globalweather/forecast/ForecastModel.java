@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.tabs.TabLayout;
+import com.marcinmoskala.arcseekbar.ArcSeekBar;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.current.CurrentForecastFragment;
 import com.nsdom.globalweather.forecast.daily.DailyForecastFragment;
@@ -109,6 +110,17 @@ public class ForecastModel {
         TextView humidityTxtView = view.findViewById(R.id.humidity_textView);
         TextView feelsLikeTxtView = view.findViewById(R.id.feels_like_textView);
         ImageView iconDescriptionTxtView = view.findViewById(R.id.iconDescription_img_view);
+        TextView sunriseTxtView = view.findViewById(R.id.sunriseTxtView);
+        TextView sunsetTextView = view.findViewById(R.id.sunsetTxtView);
+        ArcSeekBar arcSeekBar = view.findViewById(R.id.arc_seek_bar);
+        arcSeekBar.setProgressGradient(Color.YELLOW, Color.RED, Color.GRAY);
+        long currentTime = currentWeather.getTime();
+        long sunrise = currentWeather.getSunrise();
+        long sunset = currentWeather.getSunset();
+        int progress = Math.round(((currentTime - sunrise) * 1.00f) / ((sunset - sunrise) * 1.0f) * 100);
+        arcSeekBar.setProgress(progress);
+        arcSeekBar.setEnabled(false);
+        Log.d(TAG, "setupViewWidgets: Progress: " + progress);
 
         String temperature = Long.toString(Math.round(currentWeather.getTemperature()));
         String description = currentWeather.getWeather().get(0).getDescription();
@@ -120,8 +132,12 @@ public class ForecastModel {
         String iconString = currentWeather.getWeather().get(0).getIcon();
         String iconUrl = "https://openweathermap.org/img/wn/" + iconString + "@2x.png";
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm - EEE, MMM d", Locale.US);
+        SimpleDateFormat sdfSeek = new SimpleDateFormat("HH:mm a", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone(timezone));
         String time = sdf.format(currentWeather.getTime() * 1000L);
+        sdfSeek.setTimeZone(TimeZone.getTimeZone(timezone));
+        String sunriseTime = sdfSeek.format(sunrise * 1000L);
+        String sunsetTime = sdfSeek.format(sunset * 1000L);
 
         temperatureTxtView.setText(temperature);
         descriptionTxtView.setText(description);
@@ -132,6 +148,8 @@ public class ForecastModel {
         feelsLikeTxtView.setText(feelsLike);
         Picasso.get().load(iconUrl).into(iconDescriptionTxtView);
         timeTxtView.setText(time);
+        sunriseTxtView.setText(sunriseTime);
+        sunsetTextView.setText(sunsetTime);
 
     }
 
@@ -197,26 +215,24 @@ public class ForecastModel {
 
     private void setupHourlyChart(ArrayList<HourlyWeather> hourlyWeathers, LineChart lineChart) {
         List<Entry> temperature = new ArrayList<>();
+        List<Entry> feelsLike = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             Entry entry = new Entry(i, (float) (hourlyWeathers.get(i).getTemperature() * 1.00f));
+            Entry entry1 = new Entry(i, (float) (hourlyWeathers.get(i).getFeelsLike() * 1.00f));
             temperature.add(entry);
+            feelsLike.add(entry1);
         }
         LineDataSet set = new LineDataSet(temperature, "temperature");
-        styleHourlyLineDataSet(set);
+        LineDataSet set1 = new LineDataSet(feelsLike, "feels like");
+        styleLineDataSet(set, set1);
         List<ILineDataSet> dataSet = new ArrayList<>();
         dataSet.add(set);
+        dataSet.add(set1);
         LineData data = new LineData(dataSet);
         lineChart.setData(data);
         styleLineChart(lineChart);
     }
 
-    private void styleHourlyLineDataSet(LineDataSet set) {
-        set.setDrawFilled(true);
-        set.setFillColor(Color.GRAY);
-        set.setColor(Color.GRAY);
-        set.setDrawCircles(false);
-        set.setDrawValues(false);
-    }
 
     private void setupDailyChart(ArrayList<DailyWeather> dailyWeathers, LineChart lineChart) {
         List<Entry> maxTempValues = new ArrayList<>();
@@ -229,7 +245,7 @@ public class ForecastModel {
         }
         LineDataSet set1 = new LineDataSet(maxTempValues, "max");
         LineDataSet set2 = new LineDataSet(minTempValues, "min");
-        styleDailyLineDataSet(set1, set2);
+        styleLineDataSet(set1, set2);
         List<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         dataSets.add(set2);
@@ -238,7 +254,7 @@ public class ForecastModel {
         lineChart.setData(data);
     }
 
-    private void styleDailyLineDataSet(LineDataSet set1, LineDataSet set2) {
+    private void styleLineDataSet(LineDataSet set1, LineDataSet set2) {
         set1.setDrawFilled(true);
         set1.setFillColor(Color.RED);
         set1.setColor(Color.RED);
@@ -252,7 +268,7 @@ public class ForecastModel {
     }
 
     private void styleLineChart(LineChart lineChart) {
-        lineChart.invalidate();
+//        lineChart.invalidate();
         lineChart.getDescription().setPosition(0,0);
         lineChart.getXAxis().setDrawGridLines(false);
         lineChart.getAxisLeft().setDrawGridLines(false);

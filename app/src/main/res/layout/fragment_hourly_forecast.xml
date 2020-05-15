@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background_gradient">
     <RelativeLayout
         android:id="@+id/relative_layout1"
@@ -22,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:layout_margin="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_below="@id/title_text_view"
             android:orientation="horizontal"
             android:id="@+id/recyclerView"/>
@@ -30,21 +32,37 @@
     </RelativeLayout>
 
 
+
     <RelativeLayout
         android:id="@+id/relative_layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:layout_below="@id/relative_layout1"
-        android:paddingBottom="50dp">
+        android:layout_marginBottom="60dp"
+        android:padding="20dp">
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/graphView"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"/>
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            app:cardElevation="6dp"
+            android:padding="20dp"
+            app:cardPreventCornerOverlap="false" >
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/line_chart_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"/>
+
+        </androidx.cardview.widget.CardView>
+
+
 
     </RelativeLayout>
-
 
 
 </RelativeLayout>

@@ -22,6 +22,7 @@ public class DailyForecastFragment extends Fragment {
     private Context context = getActivity();
     private RecyclerView recyclerView;
     private LineChart lineChart;
+    private ForecastModel model;
 
     @Nullable
     @Override
@@ -30,8 +31,28 @@ public class DailyForecastFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerView);
         lineChart = view.findViewById(R.id.line_chart_view);
-        ForecastModel model = new ForecastModel(context);
+        model = new ForecastModel(context);
         model.fetchDailyData(recyclerView, lineChart);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        model.fetchDailyData(recyclerView, lineChart);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        lineChart.getData().clearValues();
+        recyclerView.invalidate();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        lineChart.getData().clearValues();
+        recyclerView.invalidate();
     }
 }

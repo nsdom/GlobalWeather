@@ -71,6 +71,8 @@
 
                 <include layout="@layout/snippet_current_temperature_display"/>
 
+                <include layout="@layout/snippet_arc_seek_bar"/>
+
 
             </LinearLayout>
 

@@ -26,6 +26,8 @@ public class HourlyForecastFragment extends Fragment {
     private Context context = getActivity();
     private RecyclerView recyclerView;
     private ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>();
+    private ForecastModel model;
+    private LineChart lineChart;
 
 
 
@@ -36,10 +38,30 @@ public class HourlyForecastFragment extends Fragment {
         Log.d(TAG, "onCreateView: ");
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        ForecastModel model = new ForecastModel(context);
-        LineChart lineChart = view.findViewById(R.id.graphView);
+        model = new ForecastModel(context);
+        lineChart = view.findViewById(R.id.line_chart_view);
         model.fetchHourlyData(recyclerView, lineChart);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        model.fetchHourlyData(recyclerView, lineChart);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        lineChart.getData().clearValues();
+        recyclerView.invalidate();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        lineChart.getData().clearValues();
+        recyclerView.invalidate();
     }
 }

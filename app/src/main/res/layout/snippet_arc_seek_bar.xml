@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <com.marcinmoskala.arcseekbar.ArcSeekBar
+            android:id="@+id/arc_seek_bar"
+            android:layout_width="250dp"
+            android:layout_height="75dp"
+            android:layout_centerHorizontal="true"
+            app:progressWidth="8dp"
+            app:progressBackgroundWidth="4dp"
+            app:progressBackgroundColor="@color/dark_grey"/>
+
+        <TextView
+            android:id="@+id/sunrise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sunrise"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_below="@id/arc_seek_bar"
+            android:layout_alignStart="@id/arc_seek_bar"/>
+        <TextView
+            android:id="@+id/sunset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sunset"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_below="@id/arc_seek_bar"
+            android:layout_alignEnd="@id/arc_seek_bar"/>
+
+        <TextView
+            android:id="@+id/sunriseTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8:00 am"
+            android:textColor="@color/black"
+            android:layout_below="@id/sunrise"
+            android:layout_alignStart="@id/arc_seek_bar"/>
+        <TextView
+            android:id="@+id/sunsetTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="19:30 pm"
+            android:textColor="@color/black"
+            android:layout_below="@id/sunset"
+            android:layout_alignEnd="@id/arc_seek_bar"/>
+
+
+    </RelativeLayout>
+
+</merge>
