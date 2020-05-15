@@ -41,13 +41,7 @@ dependencies {
 
     //GraphView
     implementation 'com.jjoe64:graphview:4.2.2'
-    
-    //RxAndroid
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    //RxJava
-    implementation "io.reactivex.rxjava3:rxjava:3.0.3"
-    //RxBindings
-    implementation 'com.jakewharton.rxbinding3:rxbinding-material:3.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     //SquareRetrofit
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     //RetrofitAdapter

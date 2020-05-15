@@ -7,7 +7,7 @@
                 android:startColor="@color/white"
                 android:centerColor="@color/white"
                 android:endColor="#E9EBED"
-                android:angle="-45"/>
+                android:angle="-135"/>
         </shape>
     </item>
 </layer-list>
