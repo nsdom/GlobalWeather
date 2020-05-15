@@ -4,14 +4,45 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient_inverse">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/relative_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Daily Forecast"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textAlignment="center"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="horizontal"
+            android:layout_below="@id/title_text_view"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/relative_layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Daily Forecast"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="32sp"
-        android:textAlignment="center"
-        android:layout_marginTop="100dp"/>
+        android:layout_below="@id/relative_layout1"
+        android:layout_marginBottom="50dp">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/line_chart_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

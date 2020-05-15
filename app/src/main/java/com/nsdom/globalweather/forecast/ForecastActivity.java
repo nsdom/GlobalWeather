@@ -5,25 +5,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.nsdom.globalweather.R;
-import com.nsdom.globalweather.forecast.hourly.pojo.Hourly;
-import com.nsdom.globalweather.forecast.hourly.pojo.HourlyWeather;
-import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
+import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
 import com.nsdom.globalweather.viewmodel.ViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ForecastActivity extends AppCompatActivity {
 

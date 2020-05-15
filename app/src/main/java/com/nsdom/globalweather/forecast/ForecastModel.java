@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.tabs.TabLayout;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -16,10 +17,13 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.current.CurrentForecastFragment;
 import com.nsdom.globalweather.forecast.daily.DailyForecastFragment;
+import com.nsdom.globalweather.forecast.daily.DailyRecyclerAdapter;
 import com.nsdom.globalweather.forecast.hourly.HourlyForecastFragment;
 import com.nsdom.globalweather.forecast.hourly.HourlyRecyclerAdapter;
-import com.nsdom.globalweather.forecast.hourly.pojo.Hourly;
-import com.nsdom.globalweather.forecast.hourly.pojo.HourlyWeather;
+import com.nsdom.globalweather.forecast.pojo.Daily;
+import com.nsdom.globalweather.forecast.pojo.DailyWeather;
+import com.nsdom.globalweather.forecast.pojo.Hourly;
+import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
 import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
 
 import java.util.ArrayList;
@@ -60,7 +64,7 @@ public class ForecastModel {
                 .build();
     }
 
-    public void fetchData(RecyclerView recyclerView, GraphView graphView) {
+    public void fetchHourlyData(RecyclerView recyclerView, GraphView graphView) {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
         Call<Hourly> call = openWeatherApi.getHourlyData(39.9163, -8.9520, "metric");
@@ -72,7 +76,7 @@ public class ForecastModel {
                 assert response.body() != null;
                 Log.d(TAG, "onResponse: Response: " + response.body().toString());
                 ArrayList<HourlyWeather> hourlyWeathers = response.body().getHourly();
-                setupRecyclerView(response, hourlyWeathers, recyclerView);
+                setupHourlyRecyclerView(response, hourlyWeathers, recyclerView);
                 setupGraphView(hourlyWeathers, graphView);
             }
             @Override
@@ -82,10 +86,38 @@ public class ForecastModel {
         });
     }
 
-    private void setupRecyclerView(Response<Hourly> response, ArrayList<HourlyWeather> hourlyWeathers, RecyclerView recyclerView) {
+    public void fetchDailyData(RecyclerView recyclerView, LineChart lineChart) {
+        Retrofit retrofit = getRetrofit();
+        OpenWeatherApi api = retrofit.create(OpenWeatherApi.class);
+        Call<Daily> call = api.getDailyData(39.9163, -8.9520, "metric");
+        call.enqueue(new Callback<Daily>() {
+            @Override
+            public void onResponse(Call<Daily> call, Response<Daily> response) {
+                Log.d(TAG, "onResponse: Server Response: " + response.toString());
+                assert response.body() != null;
+                Log.d(TAG, "onResponse: Response" + response.body().toString());
+                ArrayList<DailyWeather> dailyWeathers = response.body().getDaily();
+                setupDailyRecyclerView(response, dailyWeathers, recyclerView);
+            }
+            @Override
+            public void onFailure(Call<Daily> call, Throwable t) {
+                Log.e(TAG, "onFailure: Something went wrong", t);
+            }
+        });
+    }
+
+    private void setupHourlyRecyclerView(Response<Hourly> response, ArrayList<HourlyWeather> hourlyWeathers, RecyclerView recyclerView) {
         assert response.body() != null;
         String timezone = response.body().getTimezone();
         HourlyRecyclerAdapter adapter = new HourlyRecyclerAdapter(hourlyWeathers, timezone);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+    }
+
+    private void setupDailyRecyclerView(Response<Daily> response, ArrayList<DailyWeather> dailyWeathers, RecyclerView recyclerView) {
+        assert response.body() != null;
+        String timezone = response.body().getTimezone();
+        DailyRecyclerAdapter adapter = new DailyRecyclerAdapter(dailyWeathers, timezone);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
     }
@@ -115,5 +147,4 @@ public class ForecastModel {
         graphView.getGridLabelRenderer().setVerticalAxisTitle("Temperature");
         graphView.addSeries(series);
     }
-
 }

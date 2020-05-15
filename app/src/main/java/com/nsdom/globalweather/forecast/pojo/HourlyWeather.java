@@ -1,4 +1,4 @@
-package com.nsdom.globalweather.forecast.hourly.pojo;
+package com.nsdom.globalweather.forecast.pojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
