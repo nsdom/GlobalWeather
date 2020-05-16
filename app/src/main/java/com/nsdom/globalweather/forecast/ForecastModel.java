@@ -31,7 +31,7 @@ import com.nsdom.globalweather.forecast.pojo.Daily;
 import com.nsdom.globalweather.forecast.pojo.DailyWeather;
 import com.nsdom.globalweather.forecast.pojo.Hourly;
 import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
-import com.nsdom.globalweather.forecast.network.OpenWeatherApi;
+import com.nsdom.globalweather.network.OpenWeatherApi;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -131,7 +131,7 @@ public class ForecastModel {
         String feelsLike = Long.toString(Math.round(currentWeather.getFeelsLike()));
         String iconString = currentWeather.getWeather().get(0).getIcon();
         String iconUrl = "https://openweathermap.org/img/wn/" + iconString + "@2x.png";
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm - EEE, MMM d", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a, MMM d", Locale.US);
         SimpleDateFormat sdfSeek = new SimpleDateFormat("HH:mm a", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone(timezone));
         String time = sdf.format(currentWeather.getTime() * 1000L);

@@ -1,9 +1,11 @@
-package com.nsdom.globalweather.forecast.network;
+package com.nsdom.globalweather.network;
 
 import com.nsdom.globalweather.forecast.pojo.Current;
 import com.nsdom.globalweather.forecast.pojo.Daily;
 import com.nsdom.globalweather.forecast.pojo.Hourly;
+import com.nsdom.globalweather.locations.pojo.HereSearchResponse;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
