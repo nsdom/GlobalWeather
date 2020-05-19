@@ -3,6 +3,7 @@ package com.nsdom.globalweather.viewmodel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,11 +12,15 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 
+
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jakewharton.rxbinding3.widget.RxTextView;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.ForecastActivity;
+import com.nsdom.globalweather.forecast.pojo.Location;
 import com.nsdom.globalweather.locations.LocationsActivity;
+import com.nsdom.globalweather.locations.SaveLocationDialog;
 import com.nsdom.globalweather.locations.pojo.HereGeocoderResponse;
 import com.nsdom.globalweather.locations.pojo.HereSearchResponse;
 import com.nsdom.globalweather.locations.pojo.ResponsePosition;
@@ -133,15 +138,24 @@ public class ViewModel {
                         .getResult().get(0)
                         .getLocation()
                         .getDisplayPosition();
+                Location location = new Location(coordinates.getLatitude(), coordinates.getLongitude(), address);
+                Bundle args = new Bundle();
+                args.putString("address", location.getAddress());
+                args.putDouble("latitude", location.getLatitude());
+                args.putDouble("longitude", location.getLongitude());
+                SaveLocationDialog saveLocationDialog = new SaveLocationDialog();
+                saveLocationDialog.setArguments(args);
+                saveLocationDialog.show(((LocationsActivity) context).getSupportFragmentManager(), "saved locations dialog");
 
-                Intent intent = new Intent(context, ForecastActivity.class);
+                /*Intent intent = new Intent(context, ForecastActivity.class);
                 intent.putExtra("latitude", coordinates.getLatitude());
                 intent.putExtra("longitude", coordinates.getLongitude());
                 intent.putExtra("address", address);
-                context.startActivity(intent);
+                context.startActivity(intent);*/
 
                 Log.d(TAG, "onResponse: Coordinates: " + coordinates.getLatitude() + ", " + coordinates.getLongitude());
             }
+
 
             @Override
             public void onFailure(Call<HereGeocoderResponse> call, Throwable t) {
@@ -150,5 +164,8 @@ public class ViewModel {
         });
 
     }
+
+
+
 
 }

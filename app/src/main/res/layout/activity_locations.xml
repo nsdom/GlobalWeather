@@ -24,14 +24,25 @@
                 android:textSize="16sp"
                 android:inputType="textFilter"/>
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="100dp"
+            <TextView
+                android:id="@+id/recycler_header"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Search"
+                android:text="Favorite Locations"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="24sp"
                 android:layout_below="@id/auto_complete_txt_view"
-                android:layout_centerHorizontal="true"
-                android:enabled="false"/>
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_below="@id/recycler_header"/>
 
         </RelativeLayout>
 
