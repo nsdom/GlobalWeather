@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.tabs.TabLayout;
+import com.jakewharton.rxbinding3.widget.RxTextView;
 import com.marcinmoskala.arcseekbar.ArcSeekBar;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.current.CurrentForecastFragment;
@@ -31,6 +34,12 @@ import com.nsdom.globalweather.forecast.pojo.Daily;
 import com.nsdom.globalweather.forecast.pojo.DailyWeather;
 import com.nsdom.globalweather.forecast.pojo.Hourly;
 import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
+import com.nsdom.globalweather.forecast.pojo.Location;
+import com.nsdom.globalweather.locations.pojo.HereGeocoderResponse;
+import com.nsdom.globalweather.locations.pojo.HereSearchResponse;
+import com.nsdom.globalweather.locations.pojo.ResponsePosition;
+import com.nsdom.globalweather.locations.utils.ArrayAdapterNoSpaceFilter;
+import com.nsdom.globalweather.network.HereApi;
 import com.nsdom.globalweather.network.OpenWeatherApi;
 import com.squareup.picasso.Picasso;
 
@@ -41,6 +50,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,11 +63,14 @@ public class ForecastModel {
 
     private static final int BEHAVIOR = 1;
     private final Context context;
+
+
     private static final String TAG = "ForecastModel";
 
     public ForecastModel(Context context) {
         this.context = context;
     }
+
 
     void setupViewPager(ViewPager viewPager, TabLayout tabLayout) {
         PagerAdapter pagerAdapter = new PagerAdapter(((ForecastActivity) context).getSupportFragmentManager(), BEHAVIOR);
@@ -76,10 +91,10 @@ public class ForecastModel {
                 .build();
     }
 
-    public void fetchCurrentData(View view) {
+    public void fetchCurrentData(View view, Location coordinates) {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
-        Call<Current> call = openWeatherApi.getCurrentData(39.6511, -7.67345, "metric");
+        Call<Current> call = openWeatherApi.getCurrentData(coordinates.getLatitude(), coordinates.getLongitude(), "metric");
         //noinspection NullableProblems
         call.enqueue(new Callback<Current>() {
             @Override
@@ -153,10 +168,11 @@ public class ForecastModel {
 
     }
 
-    public void fetchHourlyData(RecyclerView recyclerView, LineChart lineChart) {
+
+    public void fetchHourlyData(RecyclerView recyclerView, LineChart lineChart, Location coordinates) {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi openWeatherApi = retrofit.create(OpenWeatherApi.class);
-        Call<Hourly> call = openWeatherApi.getHourlyData(39.6511, -7.67345, "metric");
+        Call<Hourly> call = openWeatherApi.getHourlyData(coordinates.getLatitude(), coordinates.getLongitude(), "metric");
         //noinspection NullableProblems
         call.enqueue(new Callback<Hourly>() {
             @Override
@@ -175,10 +191,10 @@ public class ForecastModel {
         });
     }
 
-    public void fetchDailyData(RecyclerView recyclerView, LineChart lineChart) {
+    public void fetchDailyData(RecyclerView recyclerView, LineChart lineChart, Location coordinates) {
         Retrofit retrofit = getRetrofit();
         OpenWeatherApi api = retrofit.create(OpenWeatherApi.class);
-        Call<Daily> call = api.getDailyData(39.6511, -7.67345, "metric");
+        Call<Daily> call = api.getDailyData(coordinates.getLatitude(), coordinates.getLongitude(), "metric");
         //noinspection NullableProblems
         call.enqueue(new Callback<Daily>() {
             @Override

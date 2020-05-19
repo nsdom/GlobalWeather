@@ -1,6 +1,7 @@
 package com.nsdom.globalweather.forecast.hourly;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +18,10 @@ import com.jjoe64.graphview.GraphView;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.ForecastModel;
 import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
+import com.nsdom.globalweather.forecast.pojo.Location;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class HourlyForecastFragment extends Fragment {
 
@@ -28,6 +31,8 @@ public class HourlyForecastFragment extends Fragment {
     private ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>();
     private ForecastModel model;
     private LineChart lineChart;
+    private Double latitude, longitude;
+    private Location coordinate;
 
 
 
@@ -40,7 +45,14 @@ public class HourlyForecastFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         model = new ForecastModel(context);
         lineChart = view.findViewById(R.id.line_chart_view);
-        model.fetchHourlyData(recyclerView, lineChart);
+        Intent intent = Objects.requireNonNull(getActivity()).getIntent();
+        latitude = intent.getDoubleExtra("latitude", 39.6521);
+        longitude = intent.getDoubleExtra("longitude", -7.6722);
+        coordinate = new Location(latitude, longitude, "");
+
+        Log.d(TAG, "onCreate: Coordinates" + latitude + ", " + longitude);
+
+        model.fetchHourlyData(recyclerView, lineChart, coordinate);
 
         return view;
     }
@@ -48,7 +60,7 @@ public class HourlyForecastFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        model.fetchHourlyData(recyclerView, lineChart);
+        model.fetchHourlyData(recyclerView, lineChart, coordinate);
     }
 
     @Override

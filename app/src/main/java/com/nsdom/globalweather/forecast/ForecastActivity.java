@@ -1,15 +1,19 @@
 package com.nsdom.globalweather.forecast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.nsdom.globalweather.R;
 import com.nsdom.globalweather.forecast.pojo.HourlyWeather;
+import com.nsdom.globalweather.forecast.pojo.Location;
 import com.nsdom.globalweather.viewmodel.ViewModel;
 
 import java.util.ArrayList;
@@ -23,7 +27,7 @@ public class ForecastActivity extends AppCompatActivity {
     private static final int MENU_ITEM = 0;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private ArrayList<HourlyWeather> hourlyWeather;
+
 
 
     @Override
@@ -31,10 +35,10 @@ public class ForecastActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
 
+
         setupWidgets();
         setupViewModel();
         setBottomNavigation();
-
 
 
    }

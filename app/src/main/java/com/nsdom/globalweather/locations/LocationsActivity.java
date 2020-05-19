@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.SearchView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +22,7 @@ public class LocationsActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private AutoCompleteTextView autoCompleteTextView;
     private Button button;
-    HereApi api;
+    private HereApi autoCompleteApi;
     private static final int MENU_ITEM = 2;
     private ViewModel viewModel;
     private Context context = LocationsActivity.this;
@@ -57,7 +56,7 @@ public class LocationsActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         viewModel = new ViewModel(context);
-        viewModel.searchLocation(button, api, autoCompleteTextView);
+        viewModel.searchLocation(autoCompleteApi, autoCompleteTextView);
     }
 
     private void setupWidgets() {
@@ -67,13 +66,14 @@ public class LocationsActivity extends AppCompatActivity {
     }
 
     private void setupNetwork() {
-        Retrofit retrofit = new Retrofit.Builder()
+        Retrofit autoCompleteRetro = new Retrofit.Builder()
                 .baseUrl("https://autocomplete.geocoder.api.here.com")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-       api = retrofit.create(HereApi.class);
+       autoCompleteApi = autoCompleteRetro.create(HereApi.class);
+
     }
 
     private void setBottomNavigation() {

@@ -20,7 +20,7 @@ public class Locations {
     @Expose
     private String countryCode;
 
-    @SerializedName("lovationId")
+    @SerializedName("locationId")
     @Expose
     private String locationId;
 
